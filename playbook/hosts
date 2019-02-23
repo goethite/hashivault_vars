@@ -1,0 +1,9 @@
+127.0.0.1 ansible_connection=local
+
+localhost.localdomain
+
+[my.com]
+127.0.0.2 ansible_connection=ssh
+
+[windows]
+127.0.0.3 ansible_port=5986

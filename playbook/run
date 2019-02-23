@@ -1,0 +1,6 @@
+#!/bin/bash
+VAULT_SKIP_VERIFY=1 \
+  VAULT_TOKEN=root \
+  VAULT_ADDR=http://192.168.0.69:8300 \
+  ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no" \
+  ansible-playbook -i hosts dump.yml

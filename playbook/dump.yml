@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+    - debug: var=ansible_password
+    - debug: var=ansible_connection
+    - shell: date
