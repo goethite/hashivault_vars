@@ -1,5 +1,9 @@
 # Ansible Vars Plugin for Hashicorp Vault
 
+An Ansible Vars Plugin for Hashicorp Vault to lookup credentials/secrets,
+injecting these into the playbook run (e.g. `ansible_user`, `ansible_password`,
+etc).
+
 Use Hashicorp Vault like you would ansible-vault'ed group_vars,
 domain_vars [a new concept in this module!] and host_vars.
 
@@ -19,3 +23,33 @@ $ cd /usr/local/lib/python2.7/dist-packages/ansible/plugins/vars
 $ sudo ln -s /usr/local/lib/python2.7/dist-packages/hashivault_vars/hashivault_vars.py .
 ```
 (This is done automatically if ansible was also installed using pip)
+
+
+## Vault Secret Paths
+Root path in vault:
+
+* `/secret/ansible/`
+
+Precendence (applied top to bottom, so last takes precendence):
+* Groups:
+  * `/secret/ansible/groups/all`
+  * `/secret/ansible/groups/ungrouped`
+  * `/secret/ansible/groups/your_inv_item_group`
+  * ...
+
+* Hosts/Domains:
+  * `/secret/ansible/{connection}/domains/com`
+  * `/secret/ansible/{connection}/domains/example.com`
+  * `/secret/ansible/{connection}/hosts/hosta.example.com`
+
+where `{connection}` is `ansible_connection`, e.g.: "ssh", "winrm", ...
+(this plugin attempts to make assumptions where `ansible_connection` is not
+set)
+
+All values retrieved from these paths are mapped as ansible variables,
+e.g. `ansible_user`, `ansible_password`, etc.
+
+The layered lookups are merged, with the last taking precendence over
+earlier lookups.
+
+Lookups to the vault are cached for the run.
