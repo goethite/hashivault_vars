@@ -13,7 +13,7 @@ project.
 ## Installation
 
 ```bash
-sudo pip install hashivault_vars
+sudo pip install hashivault-vars
 ```
 
 ## Enable in Ansible
@@ -22,8 +22,6 @@ Symlink from ansible's vars plugins folder to `hashivault_vars.py`:
 $ cd /usr/local/lib/python2.7/dist-packages/ansible/plugins/vars
 $ sudo ln -s /usr/local/lib/python2.7/dist-packages/hashivault_vars/hashivault_vars.py .
 ```
-(This is done automatically if ansible was also installed using pip)
-
 
 ## Vault Secret Paths
 Root path in vault:

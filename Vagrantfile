@@ -16,6 +16,7 @@ sudo pip install \
     pretty_json
 cat <<EOF >> /etc/hosts
 127.0.0.100     localhost.localdomain
+EOF
 "
 
 VAGRANTFILE_API_VERSION = "2"
