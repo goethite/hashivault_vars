@@ -2,8 +2,8 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import urllib3
-import base64
-from pretty_json import format_json
+# import base64
+# from pretty_json import format_json
 import os
 import socket
 import hvac
@@ -60,15 +60,15 @@ class VarsModule(BaseVarsPlugin):
         super(BaseVarsPlugin, self).__init__()
 
         vault_addr = "http://127.0.0.1:8200"
-        if os.environ.get('VAULT_ADDR') != None:
+        if os.environ.get('VAULT_ADDR') is not None:
             vault_addr = os.environ.get('VAULT_ADDR')
 
         vault_token = ""
-        if os.environ.get('VAULT_TOKEN') != None:
+        if os.environ.get('VAULT_TOKEN') is not None:
             vault_token = os.environ.get('VAULT_TOKEN')
 
         vault_skip_verify = False
-        if os.environ.get('VAULT_SKIP_VERIFY') != None:
+        if os.environ.get('VAULT_SKIP_VERIFY') is not None:
             vault_skip_verify = os.environ.get('VAULT_SKIP_VERIFY') == '1'
 
         self.v_client = hvac.Client(
@@ -120,7 +120,7 @@ class VarsModule(BaseVarsPlugin):
         key = "%s/%s" % (folder, entity_name)
 
         cached_value = vault_cache.get(key)
-        if cached_value != None:
+        if cached_value is not None:
             return cached_value
 
         result = self.v_client.read(
@@ -147,13 +147,13 @@ class VarsModule(BaseVarsPlugin):
             folder = "groups"
         elif isinstance(entity, Host):
             # Resolve default connection details
-            if entity.vars.get("ansible_port") == None:
-                if entity.vars.get("ansible_connection") == None:
+            if entity.vars.get("ansible_port") is None:
+                if entity.vars.get("ansible_connection") is None:
                     data["ansible_port"] = 22
             else:
                 data["ansible_port"] = entity.vars.get("ansible_port")
 
-            if entity.vars.get("ansible_connection") == None:
+            if entity.vars.get("ansible_connection") is None:
                 if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
                     data["ansible_connection"] = "winrm"
                 else:
