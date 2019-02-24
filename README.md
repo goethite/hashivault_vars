@@ -61,6 +61,11 @@ Lookups to the vault are cached for the run.
 
 ## Developer Notes
 
+### Enable Debugging
+(danger, will reveal retrieved vault secrets in the ansible log)
+
+Set environment variable `HASHIVAULT_VARS_DEBUG=1`.
+
 ### Release to PyPi
 ```bash
 $ ./setup.py sdist bdist_wheel
