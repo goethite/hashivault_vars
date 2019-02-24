@@ -25,7 +25,7 @@ $ sudo ln -s /usr/local/lib/python2.7/dist-packages/hashivault_vars/hashivault_v
 
 On Alpine Linux:
 ```bash
-pip install hashivault-vars && \
+pip install hvac hashivault-vars && \
 ln -s /usr/lib/python2.7/site-packages/hashivault_vars/hashivault_vars.py \
   /usr/lib/python2.7/site-packages/ansible/plugins/vars
 ```
@@ -63,5 +63,6 @@ Lookups to the vault are cached for the run.
 
 ### Release to PyPi
 ```bash
+$ ./setup.py sdist bdist_wheel
 $ twine upload dist/*
 ```

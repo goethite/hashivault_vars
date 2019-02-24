@@ -24,7 +24,13 @@ urllib3.disable_warnings()  # suppress InsecureRequestWarning
 # cache for vault lookups, keyed by folder
 vault_cache = {}
 
-print("hashivault_vars loaded")
+
+def debug(*args):
+    if os.environ.get('HASHIVAULT_VARS_DEBUG') == "1":
+        print("HASHIVAULT_VARS> " + "".join(map(str, args)))
+
+
+debug("hashivault_vars loaded")
 
 
 class VarsModule(BaseVarsPlugin):
@@ -205,4 +211,5 @@ class VarsModule(BaseVarsPlugin):
         for entity in entities:
             data = self._get_vars(data, entity)
 
+        debug("get_vars: ", data)
         return data
