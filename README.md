@@ -17,10 +17,17 @@ sudo pip install hashivault-vars
 ```
 
 ## Enable in Ansible
-Symlink from ansible's vars plugins folder to `hashivault_vars.py`:
+Symlink from ansible's vars plugins folder to `hashivault_vars.py`, e.g.:
 ```bash
 $ cd /usr/local/lib/python2.7/dist-packages/ansible/plugins/vars
 $ sudo ln -s /usr/local/lib/python2.7/dist-packages/hashivault_vars/hashivault_vars.py .
+```
+
+On Alpine Linux:
+```bash
+pip install hashivault-vars && \
+ln -s /usr/lib/python2.7/site-packages/hashivault_vars/hashivault_vars.py \
+  /usr/lib/python2.7/site-packages/ansible/plugins/vars
 ```
 
 ## Vault Secret Paths
