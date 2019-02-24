@@ -50,6 +50,6 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 setup(
     cmdclass={'install': CustomInstall},
     name=PKGNAME,
-    version="0.1.2",
+    version="0.1.3",
     packages=[PKGNAME]
 )

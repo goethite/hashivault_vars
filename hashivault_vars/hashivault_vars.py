@@ -127,6 +127,7 @@ class VarsModule(BaseVarsPlugin):
 
         cached_value = vault_cache.get(key)
         if cached_value is not None:
+            debug("_read_vault (cached) %s: %s" % (key, cached_value))
             return cached_value
 
         result = self.v_client.read(
@@ -136,6 +137,7 @@ class VarsModule(BaseVarsPlugin):
         if result:
             data = result["data"]
         vault_cache[key] = data
+        debug("_read_vault %s: %s" % (key, data))
         return data
 
     def _get_vars(self, data, entity):
