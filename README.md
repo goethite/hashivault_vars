@@ -51,3 +51,10 @@ The layered lookups are merged, with the last taking precendence over
 earlier lookups.
 
 Lookups to the vault are cached for the run.
+
+## Developer Notes
+
+### Release to PyPi
+```bash
+$ twine upload dist/*
+```
