@@ -81,9 +81,12 @@ class VarsModule(BaseVarsPlugin):
             self.vault_token = os.environ.get('VAULT_TOKEN')
         # debug("vault_token:", vault_token)
 
-        self.vault_skip_verify = False
+        self.tls_verify = True
         if os.environ.get('VAULT_SKIP_VERIFY') is not None:
-            self.vault_skip_verify = os.environ.get('VAULT_SKIP_VERIFY') == '1'
+            if os.environ.get('VAULT_SKIP_VERIFY') == '1':
+                self.tls_verify = False
+            # TODO: support passing a ca cert for trust
+        debug("TLS Verification:", self.tls_verify)
 
         # authenticated = False
         # v_client = None
@@ -97,7 +100,7 @@ class VarsModule(BaseVarsPlugin):
             v_client = hvac.Client(
                 url=self.vault_addr,
                 token=self.vault_token,
-                verify=self.vault_skip_verify
+                verify=self.tls_verify
                 )
             debug("after hvac.Client v_client=", v_client)
             try:
