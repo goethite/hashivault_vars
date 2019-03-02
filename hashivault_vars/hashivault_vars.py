@@ -23,6 +23,8 @@ urllib3.disable_warnings()  # suppress InsecureRequestWarning
 
 # cache for vault lookups, keyed by folder
 vault_cache = {}
+authenticated = False
+v_client = None
 
 
 def debug(*args):
@@ -63,28 +65,50 @@ class VarsModule(BaseVarsPlugin):
     """
 
     def __init__(self):
+        debug("in __init__")
         super(BaseVarsPlugin, self).__init__()
 
-        vault_addr = "http://127.0.0.1:8200"
+        self.vault_addr = None
         if os.environ.get('VAULT_ADDR') is not None:
-            vault_addr = os.environ.get('VAULT_ADDR')
+            self.vault_addr = os.environ.get('VAULT_ADDR')
+        debug("vault_addr:", self.vault_addr)
+        if self.vault_addr is None:
+            debug("VAULT_ADDR isnt set, disabling hashivault_vars plugin")
+            return
 
-        vault_token = ""
+        self.vault_token = ""
         if os.environ.get('VAULT_TOKEN') is not None:
-            vault_token = os.environ.get('VAULT_TOKEN')
+            self.vault_token = os.environ.get('VAULT_TOKEN')
+        # debug("vault_token:", vault_token)
 
-        vault_skip_verify = False
+        self.vault_skip_verify = False
         if os.environ.get('VAULT_SKIP_VERIFY') is not None:
-            vault_skip_verify = os.environ.get('VAULT_SKIP_VERIFY') == '1'
+            self.vault_skip_verify = os.environ.get('VAULT_SKIP_VERIFY') == '1'
 
-        self.v_client = hvac.Client(
-            url=vault_addr,
-            token=vault_token,
-            verify=vault_skip_verify
-            )
-        assert self.v_client.is_authenticated()
+        # authenticated = False
+        # v_client = None
+
+    def _authenticate(self):
+        """Authenticate with the vault and establish the client api"""
+        global v_client, authenticated
+
+        if v_client is None:
+            debug("AUTHENTICATING TO VAULT +++++++++++++++++++")
+            v_client = hvac.Client(
+                url=self.vault_addr,
+                token=self.vault_token,
+                verify=self.vault_skip_verify
+                )
+            debug("after hvac.Client v_client=", v_client)
+            try:
+                authenticated = v_client.is_authenticated()
+            except Exception as e:
+                print("Error: Failed to authenticate with Vault:", e)
+            else:
+                debug("authenticated to vault ok")
 
     # See https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python
+
     def _is_valid_ipv4_address(self, address):
         """Test if address is an ipv4 address."""
         try:
@@ -123,6 +147,7 @@ class VarsModule(BaseVarsPlugin):
         Returns:
             Dictionary of result data from vault
         """
+        global vault_cache
         key = "%s/%s" % (folder, entity_name)
 
         cached_value = vault_cache.get(key)
@@ -130,9 +155,14 @@ class VarsModule(BaseVarsPlugin):
             debug("_read_vault (cached) %s: %s" % (key, cached_value))
             return cached_value
 
-        result = self.v_client.read(
+        self._authenticate()
+        if not authenticated:
+            debug("get_vars not authenticated to vault, skipping vault lookups")
+            return {}
+        result = v_client.read(
             path="secret/ansible/%s" % (key)
         )
+        debug("_read_vault result:", result)
         data = {}
         if result:
             data = result["data"]
@@ -204,8 +234,11 @@ class VarsModule(BaseVarsPlugin):
 
     def get_vars(self, loader, path, entities):
         """Entry point called from Ansible to get vars."""
+
+        debug("get_vars **********************************")
         if not isinstance(entities, list):
             entities = [entities]
+        debug("lookup entities:", entities)
 
         super(VarsModule, self).get_vars(loader, path, entities)
 
