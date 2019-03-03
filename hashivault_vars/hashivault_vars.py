@@ -85,7 +85,9 @@ class VarsModule(BaseVarsPlugin):
         if os.environ.get('VAULT_SKIP_VERIFY') is not None:
             if os.environ.get('VAULT_SKIP_VERIFY') == '1':
                 self.tls_verify = False
-            # TODO: support passing a ca cert for trust
+        # TODO: support passing a ca cert for trust
+        if os.environ.get('VAULT_CACERT') is not None:
+            self.tls_verify = os.environ.get('VAULT_CACERT')
         debug("TLS Verification:", self.tls_verify)
 
         # authenticated = False
