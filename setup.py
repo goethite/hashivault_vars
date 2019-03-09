@@ -17,6 +17,9 @@ MODLINK = os.path.join(ANSIBLE_VARS, PKGNAME + ".py")
 class CustomInstall(install):
     def run(self):
         def _post_install():
+            if os.getuid() != 0:
+                return
+
             def find_module_path():
                 for p in sys.path:
                     if os.path.isdir(p) and PKGNAME in os.listdir(p):
@@ -50,6 +53,6 @@ __location__ = os.path.join(os.getcwd(), os.path.dirname(
 setup(
     cmdclass={'install': CustomInstall},
     name=PKGNAME,
-    version="0.1.14",
+    version="0.1.17",
     packages=[PKGNAME]
 )
