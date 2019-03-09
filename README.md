@@ -67,7 +67,8 @@ Lookups to the vault are cached for the run.
 Set environment variable `HASHIVAULT_VARS_DEBUG=1`.
 
 ### Release to PyPi
+From vagrant (pip prereqs are required), e.g.:
 ```bash
 $ ./setup.py sdist bdist_wheel
-$ twine upload dist/*
+$ twine upload dist/hashivault_vars-0.1.17*
 ```

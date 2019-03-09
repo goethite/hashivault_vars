@@ -4,7 +4,7 @@
 extras = "
 sudo apt update && \
 sudo apt install -y python-pip sshpass libkrb5-dev && \
-sudo pip install --upgrade pip==18.0 && \
+sudo pip install --upgrade pip setuptools wheel && \
 sudo pip install \
 		ansible==2.7.6 \
     botocore==1.12.86 \
@@ -13,7 +13,8 @@ sudo pip install \
 		awscli==1.16.96 \
     pywinrm[kerberos]==0.3.0 \
     hvac \
-    pretty_json
+    pretty_json \
+    twine
 cat <<EOF >> /etc/hosts
 127.0.0.100     localhost.localdomain
 EOF
