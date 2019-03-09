@@ -1,12 +1,12 @@
 # Ansible Vars Plugin for Hashicorp Vault
-| PyPi Downloads | | |
-|-|-|-|
+
+| Latest | | | |
+|:-|:-|:-|:-|
+|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/status/hashivault-vars.svg)|![](https://img.shields.io/pypi/format/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|
+
+| PyPi | | |
+|:-|:-|:-|
 |[![Downloads](https://pepy.tech/badge/hashivault-vars)](https://pepy.tech/project/hashivault-vars) | [![Downloads](https://pepy.tech/badge/hashivault-vars/month)](https://pepy.tech/project/hashivault-vars) | [![Downloads](https://pepy.tech/badge/hashivault-vars/week)](https://pepy.tech/project/hashivault-vars)|
-
-| Latest Version | License |
-|-|-|
-|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|
-
 
 An Ansible Vars Plugin for Hashicorp Vault to lookup credentials/secrets,
 injecting these into the playbook run (e.g. `ansible_user`, `ansible_password`,
@@ -15,7 +15,7 @@ etc).
 Use Hashicorp Vault like you would ansible-vault'ed group_vars,
 domain_vars [a new concept in this module!] and host_vars.
 
-This module was developed for the [gostint](https://goethite.github.io/gostint/)
+This module was originaly developed for the [gostint](https://goethite.github.io/gostint/)
 project.
 
 ## Installation
