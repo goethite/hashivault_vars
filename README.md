@@ -1,4 +1,7 @@
 # Ansible Vars Plugin for Hashicorp Vault
+[![Downloads](https://pepy.tech/badge/hashivault-vars)](https://pepy.tech/project/hashivault-vars)
+[![Downloads](https://pepy.tech/badge/hashivault-vars/month)](https://pepy.tech/project/hashivault-vars)
+[![Downloads](https://pepy.tech/badge/hashivault-vars/week)](https://pepy.tech/project/hashivault-vars)
 
 An Ansible Vars Plugin for Hashicorp Vault to lookup credentials/secrets,
 injecting these into the playbook run (e.g. `ansible_user`, `ansible_password`,
