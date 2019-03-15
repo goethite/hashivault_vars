@@ -1,12 +1,8 @@
 # Ansible Vars Plugin for Hashicorp Vault
 
-| Latest | | | |
-|:-|:-|:-|:-|
-|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/status/hashivault-vars.svg)|![](https://img.shields.io/pypi/format/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|
 
-| PyPi | | |
-|:-|:-|:-|
-|[![Downloads](https://pepy.tech/badge/hashivault-vars)](https://pepy.tech/project/hashivault-vars) | [![Downloads](https://pepy.tech/badge/hashivault-vars/month)](https://pepy.tech/project/hashivault-vars) | [![Downloads](https://pepy.tech/badge/hashivault-vars/week)](https://pepy.tech/project/hashivault-vars)|
+|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/status/hashivault-vars.svg)|![](https://img.shields.io/pypi/format/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|
+|-|-|-|-|
 
 An Ansible Vars Plugin for Hashicorp Vault to lookup credentials/secrets,
 injecting these into the playbook run (e.g. `ansible_user`, `ansible_password`,
