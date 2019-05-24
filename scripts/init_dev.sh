@@ -3,6 +3,9 @@
 VAULTVER=1.1.0
 
 sudo apt update
+apt-get install -y software-properties-common
+sudo add-apt-repository ppa:duggan/bats
+sudo apt update
 sudo apt install -y python-pip sshpass libkrb5-dev bats
 
 sudo pip install --upgrade pip setuptools wheel
