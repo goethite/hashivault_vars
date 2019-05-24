@@ -1,6 +1,6 @@
 language: python
 python:
   - "2.7"
-install: pip install ansible pylint
+install: pip install urllib3 ansible hvac pylint
 script:
   - pylint hashivault_vars/hashivault_vars.py
