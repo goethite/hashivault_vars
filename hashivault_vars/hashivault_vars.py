@@ -66,7 +66,7 @@ class VarsModule(BaseVarsPlugin):
 
     def __init__(self):
         debug("in __init__")
-        super(BaseVarsPlugin, self).__init__()
+        super(VarsModule, self).__init__()
 
         self.vault_addr = None
         if os.environ.get('VAULT_ADDR') is not None:
