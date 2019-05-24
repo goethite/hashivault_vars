@@ -1,3 +1,6 @@
 language: python
-install: pip install pylint
-script: pylint
+python:
+  - "2.7"
+install: pip install ansible pylint
+script:
+  - pylint
