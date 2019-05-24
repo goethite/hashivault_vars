@@ -2,3 +2,4 @@
 /build
 /dist
 /hashivault_vars.egg*
+*.pyc

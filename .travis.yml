@@ -7,3 +7,7 @@ script:
   - pylint hashivault_vars/hashivault_vars.py || /bin/true
   # Fail only on errors for now
   - pylint hashivault_vars/hashivault_vars.py --errors-only
+  # Install prereqs
+  - scripts/init_dev.sh
+  # Run BATs tests
+  - test.sh
