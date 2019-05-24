@@ -21,7 +21,12 @@ sudo pip install hashivault-vars
 ```
 
 ## Enable in Ansible
-Symlink from ansible's vars plugins folder to `hashivault_vars.py`, e.g.:
+In `ansible.cfg`:
+```
+vars_plugins = /usr/local/lib/python2.7/dist-packages/hashivault_vars
+```
+
+Or, symlink from ansible's vars plugins folder to `hashivault_vars.py`, e.g.:
 ```bash
 $ cd /usr/local/lib/python2.7/dist-packages/ansible/plugins/vars
 $ sudo ln -s /usr/local/lib/python2.7/dist-packages/hashivault_vars/hashivault_vars.py .
