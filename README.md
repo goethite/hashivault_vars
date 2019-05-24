@@ -21,7 +21,7 @@ sudo pip install hashivault-vars
 ```
 
 ## Enable in Ansible
-In `ansibe.cfg`:
+In `ansible.cfg`:
 ```
 vars_plugins = /usr/local/lib/python2.7/dist-packages/hashivault_vars
 ```
