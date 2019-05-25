@@ -1,8 +1,8 @@
 # Ansible Vars Plugin for Hashicorp Vault
 
 
-|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/status/hashivault-vars.svg)|![](https://img.shields.io/pypi/format/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|
-|-|-|-|-|
+|![](https://img.shields.io/pypi/v/hashivault-vars.svg)|![](https://img.shields.io/pypi/status/hashivault-vars.svg)|![](https://img.shields.io/pypi/format/hashivault-vars.svg)|![](https://img.shields.io/pypi/l/hashivault-vars.svg)|![](https://travis-ci.com/goethite/hashivault_vars.svg?branch=master)|
+|-|-|-|-|-|
 
 An Ansible Vars Plugin for Hashicorp Vault to lookup credentials/secrets,
 injecting these into the playbook run (e.g. `ansible_user`, `ansible_password`,
@@ -75,6 +75,15 @@ Lookups to the vault are cached for the run.
 
 ## Developer Notes
 
+### Travis CI
+Pull requests and merges to master trigger pylint and BATS tests.
+
+### Running BATS tests
+in vagrant:
+```bash
+$ tests/test.sh
+```
+
 ### Enable Debugging
 (danger, will reveal retrieved vault secrets in the ansible log)
 
@@ -84,5 +93,9 @@ Set environment variable `HASHIVAULT_VARS_DEBUG=1`.
 From vagrant (pip prereqs are required), e.g.:
 ```bash
 $ ./setup.py sdist bdist_wheel
+```
+
+Release from host:
+```bash
 $ twine upload dist/hashivault_vars-0.1.17*
 ```
