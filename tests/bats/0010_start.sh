@@ -6,8 +6,7 @@ echo "*** Starting BATS Tests ***"
 echo "***************************"
 echo
 
-echo $PATH
 export PATH=/usr/local/bin:$PATH
-echo $PATH
 
+export VAULT_ADDR=http://127.0.0.1:8200
 vault login root
