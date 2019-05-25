@@ -20,7 +20,7 @@ sudo pip install \
     pywinrm[kerberos]==0.3.0 \
     pretty_json \
     twine
-sudo pip install -r src/requirements.txt
+sudo pip install -r requirements.txt
 
 cat <<EOF >> /etc/hosts
 127.0.0.100     localhost.localdomain
@@ -40,7 +40,6 @@ echo '=== Starting vault =================================='
     >vault.log 2>&1 &
 )
 
-echo 'export VAULT_ADDR=http://127.0.0.1:8200' >> .bashrc
 export VAULT_ADDR=http://127.0.0.1:8200
 
 # Login to vault and configure

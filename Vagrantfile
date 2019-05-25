@@ -1,7 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-extras = "src/scripts/init_dev.sh"
+extras = "
+cd src && \
+scripts/init_dev.sh && \
+echo 'export VAULT_ADDR=http://127.0.0.1:8200' >> ~vagrant/.bashrc
+"
 
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
