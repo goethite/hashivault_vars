@@ -10,7 +10,7 @@ script:
   # Fail only on errors for now
   - >
     pylint hashivault_vars/hashivault_vars.py --errors-only &&
-    echo "Passed Linter"
+    echo "Passed Linter" &&
     scripts/init_dev.sh &&
     tests/test.sh &&
     echo "PASSED"
