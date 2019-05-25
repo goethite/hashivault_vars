@@ -12,5 +12,6 @@ script:
     pylint hashivault_vars/hashivault_vars.py --errors-only &&
     echo "Passed Linter" &&
     scripts/init_dev.sh &&
+    export VAULT_ADDR=http://127.0.0.1:8200 &&
     tests/test.sh &&
     echo "PASSED"
