@@ -32,7 +32,7 @@ def debug(*args):
         print("HASHIVAULT_VARS> " + "".join(map(str, args)))
 
 
-debug("hashivault_vars loaded")
+debug("hashivault_vars plugin loaded")
 
 
 class VarsModule(BaseVarsPlugin):
@@ -79,7 +79,6 @@ class VarsModule(BaseVarsPlugin):
         self.vault_token = ""
         if os.environ.get('VAULT_TOKEN') is not None:
             self.vault_token = os.environ.get('VAULT_TOKEN')
-        # debug("vault_token:", vault_token)
 
         self.tls_verify = True
         if os.environ.get('VAULT_SKIP_VERIFY') is not None:
@@ -90,9 +89,6 @@ class VarsModule(BaseVarsPlugin):
         if os.environ.get('VAULT_CACERT') is not None:
             self.tls_verify = os.environ.get('VAULT_CACERT')
         debug("TLS Verification:", self.tls_verify)
-
-        # authenticated = False
-        # v_client = None
 
     def _authenticate(self):
         """Authenticate with the vault and establish the client api"""
@@ -189,22 +185,35 @@ class VarsModule(BaseVarsPlugin):
         folder = ""
         if isinstance(entity, Group):
             folder = "groups"
-        elif isinstance(entity, Host):
-            # Resolve default connection details
-            if entity.vars.get("ansible_port") is None:
-                if entity.vars.get("ansible_connection") is None:
-                    data["ansible_port"] = 22
-            else:
-                data["ansible_port"] = entity.vars.get("ansible_port")
+            debug("group vars:", entity.vars)
 
-            if entity.vars.get("ansible_connection") is None:
-                if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
-                    data["ansible_connection"] = "winrm"
+        elif isinstance(entity, Host):
+            debug("host vars:", entity.vars)
+            debug("host groups:", entity.groups)
+
+            if data.get("ansible_connection") is None:
+                # get connection from any groups
+                for group in entity.groups:
+                    conn = group.vars.get("ansible_connection")
+                    if conn is not None:
+                        data["ansible_connection"] = conn
+
+            if data.get("ansible_connection") is None:
+                # Resolve default connection details
+                if entity.vars.get("ansible_port") is None:
+                    if entity.vars.get("ansible_connection") is None:
+                        data["ansible_port"] = 22
                 else:
-                    data["ansible_connection"] = "ssh"
-            else:
-                data["ansible_connection"] = entity.vars.get(
-                    "ansible_connection")
+                    data["ansible_port"] = entity.vars.get("ansible_port")
+
+                if entity.vars.get("ansible_connection") is None:
+                    if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
+                        data["ansible_connection"] = "winrm"
+                    else:
+                        data["ansible_connection"] = "ssh"
+                else:
+                    data["ansible_connection"] = entity.vars.get(
+                        "ansible_connection")
 
             folder = "%s/hosts" % (data["ansible_connection"])
 
@@ -230,11 +239,15 @@ class VarsModule(BaseVarsPlugin):
                     return data
                 else:
                     raise AnsibleInternalError(
-                        "Failed to extract host name parts, len: %d", len(parts))
+                        "Failed to extract host name parts, len: %d",
+                        len(parts)
+                    )
 
         else:
             raise AnsibleInternalError(
-                "Unrecognised entity type encountered in hashivault_vars plugin: %s", type(entity))
+                "Unrecognised entity type encountered in hashivault_vars plugin: %s",
+                type(entity)
+            )
 
         return combine_vars(data, self._read_vault(folder, entity.name))
 
@@ -250,6 +263,7 @@ class VarsModule(BaseVarsPlugin):
 
         data = {}
         for entity in entities:
+            data = combine_vars(data, entity.vars)
             data = self._get_vars(data, entity)
 
         debug("get_vars: ", data)

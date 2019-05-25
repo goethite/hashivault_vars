@@ -1,4 +1,5 @@
 - hosts: all
+  # connection: local
   tasks:
     - debug: var=ansible_user
     - debug: var=ansible_password
