@@ -22,7 +22,7 @@ sudo pip install \
     twine
 sudo pip install -r requirements.txt
 
-cat <<EOF >> /etc/hosts
+sudo cat <<EOF >> /etc/hosts
 127.0.0.100     localhost.localdomain
 EOF
 
