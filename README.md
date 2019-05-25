@@ -14,6 +14,11 @@ domain_vars [a new concept in this module!] and host_vars.
 This module was originaly developed for the [gostint](https://goethite.github.io/gostint/)
 project.
 
+## Prereqs
+* Ansible
+* You may need `pip install urllib3`
+* `pip install hvac`
+
 ## Installation
 
 ```bash

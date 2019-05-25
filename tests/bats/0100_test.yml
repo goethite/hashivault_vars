@@ -1,0 +1,12 @@
+- hosts: all
+  # connection: local # NOT SUPPORTED BY THIS VARS PLUGIN, see hosts file instead
+  tasks:
+    - debug: var=ansible_user
+    - debug: var=ansible_password
+    - debug: var=ansible_connection
+    # - shell: date
+    - assert:
+        that:
+          - othervar == "HelloWorld"
+          - ansible_user == "testuser"
+          - ansible_password == "testpassword"
