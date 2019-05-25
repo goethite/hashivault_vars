@@ -7,11 +7,11 @@ install: pip install urllib3 ansible hvac pylint
 script:
   # Report all issues
   - pylint hashivault_vars/hashivault_vars.py || /bin/true
-  # Fail only on errors for now
+  # Fail lint only on errors for now, run BATS tests
   - >
     pylint hashivault_vars/hashivault_vars.py --errors-only &&
-    echo "Passed Linter" &&
+    echo "*** PASSED LINTER ***" &&
     scripts/init_dev.sh &&
     export VAULT_ADDR=http://127.0.0.1:8200 &&
     tests/test.sh &&
-    echo "PASSED"
+    echo "*** PASSED ***"

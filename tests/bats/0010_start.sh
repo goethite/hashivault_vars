@@ -6,6 +6,4 @@ echo "*** Starting BATS Tests ***"
 echo "***************************"
 echo
 
-ps -efl | cat
-
-vault login root
+vault login root >/dev/null
