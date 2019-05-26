@@ -3,3 +3,4 @@
 /dist
 /hashivault_vars.egg*
 *.pyc
+*.retry
