@@ -1,11 +1,13 @@
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
+"""Ansible Vars Plugin for Hashicorp Vault"""
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type  # pylint: disable=invalid-name
+
+import os
+import socket
 import urllib3
 # import base64
 # from pretty_json import format_json
-import os
-import socket
 import hvac
 from ansible.inventory.group import Group
 from ansible.inventory.host import Host
@@ -22,12 +24,13 @@ DOCUMENTATION = '''
 urllib3.disable_warnings()  # suppress InsecureRequestWarning
 
 # cache for vault lookups, keyed by folder
-vault_cache = {}
-authenticated = False
-v_client = None
+vault_cache = {}        # pylint: disable=invalid-name
+authenticated = False   # pylint: disable=invalid-name
+v_client = None         # pylint: disable=invalid-name
 
 
 def debug(*args):
+    """Emit debug message"""
     if os.environ.get('HASHIVAULT_VARS_DEBUG') == "1":
         print("HASHIVAULT_VARS> " + "".join(map(str, args)))
 
@@ -92,7 +95,7 @@ class VarsModule(BaseVarsPlugin):
 
     def _authenticate(self):
         """Authenticate with the vault and establish the client api"""
-        global v_client, authenticated
+        global v_client, authenticated  # pylint: disable=global-statement,invalid-name
 
         if v_client is None:
             debug("AUTHENTICATING TO VAULT +++++++++++++++++++")
@@ -104,14 +107,14 @@ class VarsModule(BaseVarsPlugin):
             debug("after hvac.Client v_client=", v_client)
             try:
                 authenticated = v_client.is_authenticated()
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except,invalid-name
                 print("Error: Failed to authenticate with Vault:", e)
             else:
                 debug("authenticated to vault ok")
 
     # See https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python
 
-    def _is_valid_ipv4_address(self, address):
+    def _is_valid_ipv4_address(self, address):  # pylint: disable=no-self-use
         """Test if address is an ipv4 address."""
         try:
             socket.inet_pton(socket.AF_INET, address)
@@ -125,7 +128,7 @@ class VarsModule(BaseVarsPlugin):
             return False
         return True
 
-    def _is_valid_ipv6_address(self, address):
+    def _is_valid_ipv6_address(self, address):  # pylint: disable=no-self-use
         """Test if address is an ipv6 address."""
         try:
             socket.inet_pton(socket.AF_INET6, address)
@@ -149,7 +152,7 @@ class VarsModule(BaseVarsPlugin):
         Returns:
             Dictionary of result data from vault
         """
-        global vault_cache
+        global vault_cache  # pylint: disable=global-statement,invalid-name
         key = "%s/%s" % (folder, entity_name)
 
         cached_value = vault_cache.get(key)
@@ -172,6 +175,41 @@ class VarsModule(BaseVarsPlugin):
         debug("_read_vault %s: %s" % (key, data))
         return data
 
+    def resolve_ansible_connection(self, data, entity):  # pylint: disable=no-self-use
+        """Resolve ansible_connection.
+
+        Arguments:
+            data -- dict to resolve ansible_connection into
+            entity -- Ansible Group or Host entity to resolve for
+
+        Returns:
+            Dictionary of combined / overlayed vars values.
+        """
+        if data.get("ansible_connection") is None:
+            # get connection from any groups
+            for group in entity.groups:
+                conn = group.vars.get("ansible_connection")
+                if conn is not None:
+                    data["ansible_connection"] = conn
+
+        if data.get("ansible_connection") is None:
+            # Resolve default connection details
+            if entity.vars.get("ansible_port") is None:
+                if entity.vars.get("ansible_connection") is None:
+                    data["ansible_port"] = 22
+            else:
+                data["ansible_port"] = entity.vars.get("ansible_port")
+
+            if entity.vars.get("ansible_connection") is None:
+                if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
+                    data["ansible_connection"] = "winrm"
+                else:
+                    data["ansible_connection"] = "ssh"
+            else:
+                data["ansible_connection"] = entity.vars.get(
+                    "ansible_connection")
+        return data
+
     def _get_vars(self, data, entity):
         """Resolve lookup for vars from Vault.
 
@@ -191,30 +229,7 @@ class VarsModule(BaseVarsPlugin):
             debug("host vars:", entity.vars)
             debug("host groups:", entity.groups)
 
-            if data.get("ansible_connection") is None:
-                # get connection from any groups
-                for group in entity.groups:
-                    conn = group.vars.get("ansible_connection")
-                    if conn is not None:
-                        data["ansible_connection"] = conn
-
-            if data.get("ansible_connection") is None:
-                # Resolve default connection details
-                if entity.vars.get("ansible_port") is None:
-                    if entity.vars.get("ansible_connection") is None:
-                        data["ansible_port"] = 22
-                else:
-                    data["ansible_port"] = entity.vars.get("ansible_port")
-
-                if entity.vars.get("ansible_connection") is None:
-                    if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
-                        data["ansible_connection"] = "winrm"
-                    else:
-                        data["ansible_connection"] = "ssh"
-                else:
-                    data["ansible_connection"] = entity.vars.get(
-                        "ansible_connection")
-
+            data = self.resolve_ansible_connection(data, entity)
             folder = "%s/hosts" % (data["ansible_connection"])
 
             if not self._is_valid_ip_address(entity.name):
@@ -238,13 +253,13 @@ class VarsModule(BaseVarsPlugin):
                         prev_part = '.' + part + prev_part
                     return data
                 else:
-                    raise AnsibleInternalError(
+                    raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
                         "Failed to extract host name parts, len: %d",
                         len(parts)
                     )
 
         else:
-            raise AnsibleInternalError(
+            raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
                 "Unrecognised entity type encountered in hashivault_vars plugin: %s",
                 type(entity)
             )
