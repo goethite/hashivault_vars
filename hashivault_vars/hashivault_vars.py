@@ -275,6 +275,10 @@ class VarsModule(BaseVarsPlugin):
     def get_vars(self, loader, path, entities):
         """Entry point called from Ansible to get vars."""
 
+        if self.vault_addr is None:
+            debug("VAULT_ADDR isnt set, skipping hashivault_vars plugin")
+            return
+
         debug("get_vars **********************************")
         if not isinstance(entities, list):
             entities = [entities]
