@@ -10,6 +10,7 @@ echo 'export VAULT_ADDR=http://127.0.0.1:8200' >> ~vagrant/.bashrc
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "ansible", primary: true do |ansible|
+    ansible.vm.usable_port_range = 2300..2350
     ansible.vm.provision "shell", inline: extras
     ansible.vm.synced_folder "./", "/home/vagrant/src/"
     ansible.vm.provider "docker" do |d|
