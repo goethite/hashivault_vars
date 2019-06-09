@@ -277,7 +277,7 @@ class VarsModule(BaseVarsPlugin):
 
         if self.vault_addr is None:
             debug("VAULT_ADDR isnt set, skipping hashivault_vars plugin")
-            return
+            return {}
 
         debug("get_vars **********************************")
         if not isinstance(entities, list):
