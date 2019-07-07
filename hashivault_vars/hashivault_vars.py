@@ -181,40 +181,42 @@ class VarsModule(BaseVarsPlugin):
         debug("_read_vault %s: %s" % (key, data))
         return data
 
-    def resolve_ansible_connection(self, data, entity):  # pylint: disable=no-self-use
+    def _get_ansible_connection(self, data, entity):  # pylint: disable=no-self-use
         """Resolve ansible_connection.
 
         Arguments:
-            data -- dict to resolve ansible_connection into
+            data -- dict of vars accumulated by this plugin
             entity -- Ansible Group or Host entity to resolve for
 
         Returns:
-            Dictionary of combined / overlayed vars values.
+            ansible_connection or None if not set
         """
-        if data.get("ansible_connection") is None:
-            # get connection from any groups
+        conn = data.get("ansible_connection")
+        if conn:
+            return conn
+
+        conn = entity.vars.get("ansible_connection")
+        if conn is None:
             for group in entity.groups:
                 conn = group.vars.get("ansible_connection")
-                if conn is not None:
-                    data["ansible_connection"] = conn
+                if conn:
+                    return conn
 
-        if data.get("ansible_connection") is None:
-            # Resolve default connection details
-            if entity.vars.get("ansible_port") is None:
-                if entity.vars.get("ansible_connection") is None:
-                    data["ansible_port"] = 22
-            else:
-                data["ansible_port"] = entity.vars.get("ansible_port")
+            # Try to deduce connection from ansible_port
+            port = data.get("ansible_port")
+            if port is None:
+                port = entity.vars.get("ansible_port")
+            if port is None:
+                for group in entity.groups:
+                    port = group.vars.get("ansible_port")
+                    if port:
+                        break
+            if port == 22:
+                conn = "ssh"
+            elif port in (5985, 5986):
+                conn = "winrm"
 
-            if entity.vars.get("ansible_connection") is None:
-                if data["ansible_port"] == 5985 or data["ansible_port"] == 5986:
-                    data["ansible_connection"] = "winrm"
-                else:
-                    data["ansible_connection"] = "ssh"
-            else:
-                data["ansible_connection"] = entity.vars.get(
-                    "ansible_connection")
-        return data
+        return conn
 
     def _get_vars(self, data, entity):
         """Resolve lookup for vars from Vault.
@@ -235,8 +237,12 @@ class VarsModule(BaseVarsPlugin):
             debug("host vars:", entity.vars)
             debug("host groups:", entity.groups)
 
-            data = self.resolve_ansible_connection(data, entity)
-            folder = "%s/hosts" % (data["ansible_connection"])
+            conn = self._get_ansible_connection(data, entity)
+            if conn is None:
+                conn = "ssh"
+            folder = "%s/hosts" % conn
+            data = combine_vars(data, self._read_vault(folder, entity.name))
+            folder = "hosts"
 
             if not self._is_valid_ip_address(entity.name):
                 parts = entity.name.split('.')
