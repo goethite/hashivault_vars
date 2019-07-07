@@ -66,7 +66,9 @@ Precendence (applied top to bottom, so last takes precendence):
 
 where `{connection}` is `ansible_connection`, e.g.: "ssh", "winrm", ...
 (this plugin attempts to make assumptions where `ansible_connection` is not
-set, but does not assume to inject this into vars in the playbook)
+set, but does not assume to inject this into vars in the playbook. Best
+practice therefore would be to set `ansible_connection` in your ansible
+inventory).
 
 All values retrieved from these paths are mapped as ansible variables,
 e.g. `ansible_user`, `ansible_password`, etc.
