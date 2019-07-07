@@ -218,6 +218,25 @@ class VarsModule(BaseVarsPlugin):
 
         return conn
 
+    def _lookup_host_entity(self, conn, data, entity_name, entity_type):
+        """Lookup host entity in vault
+        conn -- ansible_connection
+        data -- dict to accumulate vars into
+        entity -- Ansible Group or Host entity to lookup for
+        entity_type -- "hosts" or "domains"
+        """
+        folder = entity_type
+        data = combine_vars(
+            data,
+            self._read_vault(folder, entity_name)
+        )
+
+        folder = "%s/%s" % (conn, entity_type)
+        return combine_vars(
+            data,
+            self._read_vault(folder, entity_name)
+        )
+
     def _get_vars(self, data, entity):
         """Resolve lookup for vars from Vault.
 
@@ -232,6 +251,7 @@ class VarsModule(BaseVarsPlugin):
         if isinstance(entity, Group):
             folder = "groups"
             debug("group vars:", entity.vars)
+            return combine_vars(data, self._read_vault(folder, entity.name))
 
         elif isinstance(entity, Host):
             debug("host vars:", entity.vars)
@@ -240,28 +260,27 @@ class VarsModule(BaseVarsPlugin):
             conn = self._get_ansible_connection(data, entity)
             if conn is None:
                 conn = "ssh"
-            folder = "%s/hosts" % conn
-            data = combine_vars(data, self._read_vault(folder, entity.name))
-            folder = "hosts"
 
-            if not self._is_valid_ip_address(entity.name):
+            if self._is_valid_ip_address(entity.name):
+                return self._lookup_host_entity(conn, data, entity.name, "hosts")
+
+            else:   # hostname or fqdn
                 parts = entity.name.split('.')
-                if len(parts) == 1:
-                    pass
+                if len(parts) == 1:  # short hostname
+                    return self._lookup_host_entity(conn, data, entity.name, "hosts")
 
-                elif len(parts) > 1:
-                    folder = "%s/domains" % (data["ansible_connection"])
+                elif len(parts) > 1:  # handle fqdn
                     # Loop lookups from domain-root to fqdn
                     parts.reverse()
                     prev_part = ""
                     for part in parts:
                         lookup_part = part + prev_part
                         if lookup_part == entity.name:
-                            folder = "%s/hosts" % (data["ansible_connection"])
-                        data = combine_vars(
-                            data,
-                            self._read_vault(folder, lookup_part)
-                        )
+                            data = self._lookup_host_entity(
+                                conn, data, lookup_part, "hosts")
+                        else:
+                            data = self._lookup_host_entity(
+                                conn, data, lookup_part, "domains")
                         prev_part = '.' + part + prev_part
                     return data
                 else:
@@ -275,8 +294,6 @@ class VarsModule(BaseVarsPlugin):
                 "Unrecognised entity type encountered in hashivault_vars plugin: %s",
                 type(entity)
             )
-
-        return combine_vars(data, self._read_vault(folder, entity.name))
 
     def get_vars(self, loader, path, entities):
         """Entry point called from Ansible to get vars."""
