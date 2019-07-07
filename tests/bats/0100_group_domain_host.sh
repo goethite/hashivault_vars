@@ -7,7 +7,7 @@
     VAULT_ADDR=http://127.0.0.1:8200 \
     ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no" \
     HASHIVAULT_VARS_DEBUG=0 \
-    ansible-playbook -i 0100_hosts 0100_test_all.yml
+    ansible-playbook -i 0100_hosts 0100_test_all.yml -vvv
   RC=$?
   vault kv delete secret/ansible/groups/all
   return $RC
@@ -43,6 +43,21 @@
   return $RC
 }
 
+@test "Play pulls creds from domain localdomain fallback to non-conn folder" {
+  vault kv put secret/ansible/groups/all ansible_user=testuser ansible_password=testpassword othervar=HelloWorld
+  vault kv put secret/ansible/domains/localdomain ansible_user=testuser ansible_password=testpassword othervar=LocalDomain
+  VAULT_SKIP_VERIFY=1 \
+    VAULT_TOKEN=root \
+    VAULT_ADDR=http://127.0.0.1:8200 \
+    ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no" \
+    HASHIVAULT_VARS_DEBUG=0 \
+    ansible-playbook -i 0100_hosts 0100_test_localdomain.yml
+  RC=$?
+  vault kv delete secret/ansible/domains/localdomain
+  vault kv delete secret/ansible/groups/all
+  return $RC
+}
+
 @test "Play pulls creds from host localhost.localdomain" {
   vault kv put secret/ansible/groups/all ansible_user=testuser ansible_password=testpassword othervar=HelloWorld
   vault kv put secret/ansible/local/hosts/localhost.localdomain ansible_user=testuser ansible_password=testpassword othervar=LocalHost
@@ -54,6 +69,21 @@
     ansible-playbook -i 0100_hosts 0100_test_localhost.yml
   RC=$?
   vault kv delete secret/ansible/local/hosts/localhost.localdomain
+  vault kv delete secret/ansible/groups/all
+  return $RC
+}
+
+@test "Play pulls creds from host localhost.localdomain fallback to non-conn folder" {
+  vault kv put secret/ansible/groups/all ansible_user=testuser ansible_password=testpassword othervar=HelloWorld
+  vault kv put secret/ansible/hosts/localhost.localdomain ansible_user=testuser ansible_password=testpassword othervar=LocalHost
+  VAULT_SKIP_VERIFY=1 \
+    VAULT_TOKEN=root \
+    VAULT_ADDR=http://127.0.0.1:8200 \
+    ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no" \
+    HASHIVAULT_VARS_DEBUG=0 \
+    ansible-playbook -i 0100_hosts 0100_test_localhost.yml
+  RC=$?
+  vault kv delete secret/ansible/hosts/localhost.localdomain
   vault kv delete secret/ansible/groups/all
   return $RC
 }
