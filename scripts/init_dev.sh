@@ -12,7 +12,7 @@ sudo apt install -y python-pip sshpass libkrb5-dev bats
 sudo pip install --upgrade pip setuptools wheel
 sudo pip install \
     pip-tools \
-		ansible==2.7.6 \
+		ansible==2.8.2 \
     botocore==1.12.86 \
 		boto==2.49.0 \
 		boto3==1.9.86 \

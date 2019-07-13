@@ -7,8 +7,9 @@
     VAULT_ADDR=http://127.0.0.1:8200 \
     ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no" \
     HASHIVAULT_VARS_DEBUG=0 \
-    ansible-playbook -i 0100_hosts 0100_test_all.yml -vvv
+    ansible-playbook -i 0100_hosts 0100_test_all.yml -vvvv
   RC=$?
+  # RC=1
   vault kv delete secret/ansible/groups/all
   return $RC
 }
