@@ -7,20 +7,19 @@ sudo apt install -y software-properties-common
 
 sudo add-apt-repository -y ppa:duggan/bats
 sudo apt update
-sudo apt install -y python-pip sshpass libkrb5-dev bats
+sudo apt install -y python3 python3-pip sshpass libkrb5-dev bats
 
-sudo pip install --upgrade pip setuptools wheel
-sudo pip install \
+sudo pip3 install --upgrade pip setuptools wheel
+sudo pip3 install \
     pip-tools \
 		ansible==2.8.2 \
-    botocore==1.12.86 \
 		boto==2.49.0 \
 		boto3==1.9.86 \
-		awscli==1.16.96 \
+		awscli \
     pywinrm[kerberos]==0.3.0 \
     pretty_json \
     twine
-sudo pip install -r requirements.txt
+sudo pip3 install -r requirements.txt
 
 sudo bash -c 'cat >> /etc/hosts' <<EOF
 127.0.0.100     localhost.localdomain

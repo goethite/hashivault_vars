@@ -104,3 +104,28 @@ Release from host:
 ```bash
 $ twine upload dist/hashivault_vars-0.1.17*
 ```
+
+### Ansible Deprecation Warnings
+
+#### TRANSFORM_INVALID_GROUP_CHARS
+```
+ansible-playbook 2.8.2
+  config file = /home/vagrant/src/tests/bats/ansible.cfg
+  configured module search path = ['/home/vagrant/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/local/lib/python3.6/dist-packages/ansible
+  executable location = /usr/local/bin/ansible-playbook
+  python version = 3.6.8 (default, Jan 14 2019, 11:02:34) [GCC 8.0.1 20180414 (experimental) [trunk revision 259383]]
+Using /home/vagrant/src/tests/bats/ansible.cfg as config file
+setting up inventory plugins
+host_list declined parsing /home/vagrant/src/tests/bats/0100_hosts as it did not pass it's verify_file() method
+script declined parsing /home/vagrant/src/tests/bats/0100_hosts as it did not pass it's verify_file() method
+auto declined parsing /home/vagrant/src/tests/bats/0100_hosts as it did not pass it's verify_file() method
+Set default localhost to 127.0.0.1
+Not replacing invalid character(s) "{'.'}" in group name (my.com)
+[DEPRECATION WARNING]: The TRANSFORM_INVALID_GROUP_CHARS settings is set to allow bad characters in group names by default, this will change, but still be user
+configurable on deprecation. This feature will be removed in version 2.10. Deprecation warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+ [WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+Not replacing invalid character(s) "{'.'}" in group name (my.com)
+```
+By default from ansible 2.10 FQDNs/Domains (with .'s) as group names will not be
+supported, and may need to be entered into vault with _'s instead of .'s...
