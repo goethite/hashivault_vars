@@ -10,8 +10,6 @@ sudo apt update
 sudo apt install -y python3 python3-pip sshpass libkrb5-dev bats
 
 sudo pip3 install --upgrade pip setuptools wheel
-#botocore==1.12.86 \
-# awscli==1.16.96 \
 sudo pip3 install \
     pip-tools \
 		ansible==2.8.2 \
