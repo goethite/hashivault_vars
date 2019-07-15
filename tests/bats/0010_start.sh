@@ -6,6 +6,9 @@ echo "*** Starting BATS Tests ***"
 echo "***************************"
 echo
 
+ansible --version
+echo
+
 vault login root >/dev/null
 
 # cleanup

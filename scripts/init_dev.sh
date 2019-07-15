@@ -21,15 +21,21 @@ sudo pip3 install \
     twine
 sudo pip3 install -r requirements.txt
 
-sudo bash -c 'cat >> /etc/hosts' <<EOF
+if
+  grep "127.0.0.100" < /etc/hosts
+then
+  :
+else
+  sudo bash -c 'cat >> /etc/hosts' <<EOF
 127.0.0.100     localhost.localdomain
 EOF
+fi
 
 # Install and start Vault server in dev mode
 wget -qO /tmp/vault.zip https://releases.hashicorp.com/vault/${VAULTVER}/vault_${VAULTVER}_linux_amd64.zip && \
    ( cd /usr/local/bin && sudo unzip -u /tmp/vault.zip )
 rm /tmp/vault.zip
-vault -autocomplete-install
+vault -autocomplete-install || /bin/true
 echo '=== Starting vault =================================='
 (
   cd /tmp
