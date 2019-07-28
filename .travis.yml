@@ -3,6 +3,7 @@ dist: xenial
 language: python
 python:
   - "2.7"
+  - "3.6"
 install: pip install urllib3 ansible hvac pylint
 script:
   # Report all issues
