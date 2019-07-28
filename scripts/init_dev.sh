@@ -18,7 +18,8 @@ sudo pip3 install \
 		awscli \
     pywinrm[kerberos]==0.3.0 \
     pretty_json \
-    twine
+    twine \
+    pylint
 sudo pip3 install -r requirements.txt
 
 if
