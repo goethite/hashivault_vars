@@ -253,7 +253,7 @@ class VarsModule(BaseVarsPlugin):
             debug("group vars:", entity.vars)
             return combine_vars(data, self._read_vault(folder, entity.name))
 
-        elif isinstance(entity, Host):
+        if isinstance(entity, Host):
             debug("host vars:", entity.vars)
             debug("host groups:", entity.groups)
 
@@ -264,30 +264,30 @@ class VarsModule(BaseVarsPlugin):
             if self._is_valid_ip_address(entity.name):
                 return self._lookup_host_entity(conn, data, entity.name, "hosts")
 
-            else:   # hostname or fqdn
-                parts = entity.name.split('.')
-                if len(parts) == 1:  # short hostname
-                    return self._lookup_host_entity(conn, data, entity.name, "hosts")
+            # hostname or fqdn
+            parts = entity.name.split('.')
+            if len(parts) == 1:  # short hostname
+                return self._lookup_host_entity(conn, data, entity.name, "hosts")
 
-                elif len(parts) > 1:  # handle fqdn
-                    # Loop lookups from domain-root to fqdn
-                    parts.reverse()
-                    prev_part = ""
-                    for part in parts:
-                        lookup_part = part + prev_part
-                        if lookup_part == entity.name:
-                            data = self._lookup_host_entity(
-                                conn, data, lookup_part, "hosts")
-                        else:
-                            data = self._lookup_host_entity(
-                                conn, data, lookup_part, "domains")
-                        prev_part = '.' + part + prev_part
-                    return data
-                else:
-                    raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
-                        "Failed to extract host name parts, len: %d",
-                        len(parts)
-                    )
+            if len(parts) > 1:  # handle fqdn
+                # Loop lookups from domain-root to fqdn
+                parts.reverse()
+                prev_part = ""
+                for part in parts:
+                    lookup_part = part + prev_part
+                    if lookup_part == entity.name:
+                        data = self._lookup_host_entity(
+                            conn, data, lookup_part, "hosts")
+                    else:
+                        data = self._lookup_host_entity(
+                            conn, data, lookup_part, "domains")
+                    prev_part = '.' + part + prev_part
+                return data
+            else:
+                raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
+                    "Failed to extract host name parts, len: %d",
+                    len(parts)
+                )
 
         else:
             raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
