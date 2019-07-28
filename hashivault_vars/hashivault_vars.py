@@ -38,6 +38,7 @@ def debug(*args):
 debug("hashivault_vars plugin loaded")
 
 
+# pylint: disable=R0903
 class VarsModule(BaseVarsPlugin):
     """
     Hashicorp Vault Vars Plugin.
@@ -283,17 +284,15 @@ class VarsModule(BaseVarsPlugin):
                             conn, data, lookup_part, "domains")
                     prev_part = '.' + part + prev_part
                 return data
-            else:
-                raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
-                    "Failed to extract host name parts, len: %d",
-                    len(parts)
-                )
-
-        else:
             raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
-                "Unrecognised entity type encountered in hashivault_vars plugin: %s",
-                type(entity)
+                "Failed to extract host name parts, len: %d",
+                len(parts)
             )
+
+        raise AnsibleInternalError(  # pylint: disable=raising-format-tuple
+            "Unrecognised entity type encountered in hashivault_vars plugin: %s",
+            type(entity)
+        )
 
     def get_vars(self, loader, path, entities):
         """Entry point called from Ansible to get vars."""
